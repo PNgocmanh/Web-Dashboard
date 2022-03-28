@@ -151,7 +151,7 @@ const WidgetsDropdown = () => {
         <CWidgetStatsA
           className="mb-4"
           color="warning"
-          value={<div>Customer</div>}
+          value={<div>Survey</div>}
           chart={
             <CChartLine
               className="mt-3"

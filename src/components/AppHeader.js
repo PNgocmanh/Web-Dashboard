@@ -45,9 +45,6 @@ const AppHeader = () => {
               Emotion data
             </CNavLink>
           </CNavItem>
-          <CNavItem>
-            <CNavLink href="/charts">About</CNavLink>
-          </CNavItem>
         </CHeaderNav>
         <CHeaderNav className="ms-3">
           <AppHeaderDropdown />

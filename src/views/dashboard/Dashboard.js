@@ -1,365 +1,423 @@
-import React, { lazy } from 'react'
+import React, { Component, lazy } from 'react'
+import { useState } from 'react'
 
 import {
-  CAvatar,
-  CButton,
-  CButtonGroup,
   CCard,
   CCardBody,
-  CCardFooter,
   CCardHeader,
   CCol,
-  CProgress,
   CRow,
+  CProgress,
   CTable,
   CTableBody,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
   CTableRow,
+  CFormSelect,
 } from '@coreui/react'
-import { CChartBar } from '@coreui/react-chartjs'
-import { getStyle, hexToRgba } from '@coreui/utils'
-import CIcon from '@coreui/icons-react'
-import {
-  cibCcAmex,
-  cibCcApplePay,
-  cibCcMastercard,
-  cibCcPaypal,
-  cibCcStripe,
-  cibCcVisa,
-  cibGoogle,
-  cibFacebook,
-  cibLinkedin,
-  cifBr,
-  cifEs,
-  cifFr,
-  cifIn,
-  cifPl,
-  cifUs,
-  cibTwitter,
-  cilCloudDownload,
-  cilPeople,
-  cilUser,
-  cilUserFemale,
-} from '@coreui/icons'
+import { CChartBar, CChart } from '@coreui/react-chartjs'
 
-import avatar1 from 'src/assets/images/avatars/1.jpg'
-import avatar2 from 'src/assets/images/avatars/2.jpg'
-import avatar3 from 'src/assets/images/avatars/3.jpg'
-import avatar4 from 'src/assets/images/avatars/4.jpg'
-import avatar5 from 'src/assets/images/avatars/5.jpg'
-import avatar6 from 'src/assets/images/avatars/6.jpg'
+import { Bar } from 'react-chartjs-2'
+import { render } from 'react-dom'
+import { number } from 'prop-types'
 
 const WidgetsDropdown = lazy(() => import('../widgets/WidgetsDropdown.js'))
-const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
 
-const Dashboard = () => {
-  const random = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1) + min)
-  }
+const dataexample = [
+  { id: 1, name: 'Product 1', angry: 40, disgust: 20, happy: 12, neutral: 39, surprise: 10 },
+  { id: 2, name: 'Product 2', angry: 10, disgust: 10, happy: 40, neutral: 20, surprise: 30 },
+  { id: 3, name: 'Product 3', angry: 5, disgust: 0, happy: 50, neutral: 10, surprise: 30 },
+]
 
-  /*const progressExample = [
-    { title: 'Visits', value: '29.703 Users', percent: 40, color: 'success' },
-    { title: 'Unique', value: '24.093 Users', percent: 20, color: 'info' },
-    { title: 'Pageviews', value: '78.706 Views', percent: 60, color: 'warning' },
-    { title: 'New Users', value: '22.123 Users', percent: 80, color: 'danger' },
-    { title: 'Bounce Rate', value: 'Average Rate', percent: 40.15, color: 'primary' },
-  ]*/
+const progressGroupExample2 = [
+  { title: 'Male', value: 53 },
+  { title: 'Female', value: 43 },
+]
 
-  const progressGroupExample1 = [
-    { title: 'Monday', value1: 34, value2: 78 },
-    { title: 'Tuesday', value1: 56, value2: 94 },
-    { title: 'Wednesday', value1: 12, value2: 67 },
-    { title: 'Thursday', value1: 43, value2: 91 },
-    { title: 'Friday', value1: 22, value2: 73 },
-    { title: 'Saturday', value1: 53, value2: 82 },
-    { title: 'Sunday', value1: 9, value2: 69 },
-  ]
+const progressGroupExample3 = [
+  { title: 'Organic Search', percent: 56, value: '191,235' },
+  { title: 'Facebook', percent: 15, value: '51,223' },
+  { title: 'Twitter', percent: 11, value: '37,564' },
+  { title: 'LinkedIn', percent: 8, value: '27,319' },
+]
 
-  const progressGroupExample2 = [
-    { title: 'Male', icon: cilUser, value: 53 },
-    { title: 'Female', icon: cilUserFemale, value: 43 },
-  ]
-
-  const progressGroupExample3 = [
-    { title: 'Organic Search', icon: cibGoogle, percent: 56, value: '191,235' },
-    { title: 'Facebook', icon: cibFacebook, percent: 15, value: '51,223' },
-    { title: 'Twitter', icon: cibTwitter, percent: 11, value: '37,564' },
-    { title: 'LinkedIn', icon: cibLinkedin, percent: 8, value: '27,319' },
-  ]
-
-  const tableExample = [
-    {
-      avatar: { src: avatar1, status: 'success' },
-      user: {
-        name: 'Yiorgos Avraamu',
-        new: true,
-        registered: 'Jan 1, 2021',
-      },
-      country: { name: 'USA', flag: cifUs },
-      usage: {
-        value: 50,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'success',
-      },
-      payment: { name: 'Mastercard', icon: cibCcMastercard },
-      activity: '10 sec ago',
-    },
-    {
-      avatar: { src: avatar2, status: 'danger' },
-      user: {
-        name: 'Avram Tarasios',
-        new: false,
-        registered: 'Jan 1, 2021',
-      },
-      country: { name: 'Brazil', flag: cifBr },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'info',
-      },
-      payment: { name: 'Visa', icon: cibCcVisa },
-      activity: '5 minutes ago',
-    },
-    {
-      avatar: { src: avatar3, status: 'warning' },
-      user: { name: 'Quintin Ed', new: true, registered: 'Jan 1, 2021' },
-      country: { name: 'India', flag: cifIn },
-      usage: {
-        value: 74,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'warning',
-      },
-      payment: { name: 'Stripe', icon: cibCcStripe },
-      activity: '1 hour ago',
-    },
-    {
-      avatar: { src: avatar4, status: 'secondary' },
-      user: { name: 'Enéas Kwadwo', new: true, registered: 'Jan 1, 2021' },
-      country: { name: 'France', flag: cifFr },
-      usage: {
-        value: 98,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'danger',
-      },
-      payment: { name: 'PayPal', icon: cibCcPaypal },
-      activity: 'Last month',
-    },
-    {
-      avatar: { src: avatar5, status: 'success' },
-      user: {
-        name: 'Agapetus Tadeáš',
-        new: true,
-        registered: 'Jan 1, 2021',
-      },
-      country: { name: 'Spain', flag: cifEs },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'primary',
-      },
-      payment: { name: 'Google Wallet', icon: cibCcApplePay },
-      activity: 'Last week',
-    },
-    {
-      avatar: { src: avatar6, status: 'danger' },
-      user: {
-        name: 'Friderik Dávid',
-        new: true,
-        registered: 'Jan 1, 2021',
-      },
-      country: { name: 'Poland', flag: cifPl },
-      usage: {
-        value: 43,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'success',
-      },
-      payment: { name: 'Amex', icon: cibCcAmex },
-      activity: 'Last week',
-    },
-  ]
-
+function ProductDashboardBar(props) {
+  // eslint-disable-next-line react/prop-types
+  const id = props.selectKey
   return (
-    <>
-      <WidgetsDropdown />
-      <CCard className="mb-4">
-        <CCardBody>
-          <CRow>
-            <CCol sm={5}>
-              <h4 id="traffic" className="card-title mb-0">
-                Emotion Dashboard
-              </h4>
-              <div className="small text-medium-emphasis">Frebruay - March 2022</div>
-            </CCol>
-          </CRow>
-          <CCardBody>
+    <div>
+      {dataexample
+        .filter((numberID) => numberID.id == id)
+        .map((items) => (
+          <>
             <CChartBar
-              //style={{ height: '300px', marginTop: '40px' }}
               data={{
                 labels: ['Angry', 'Disgust', 'Happy', 'Neutral', 'Surprise'],
                 datasets: [
                   {
-                    label: 'Emotion Commits',
+                    label: 'Emotion',
                     backgroundColor: '#f87979',
-                    data: [40, 20, 12, 39, 10, 50],
+                    data: [
+                      items.angry,
+                      items.disgust,
+                      items.happy,
+                      items.neutral,
+                      items.surprise,
+                      100,
+                    ],
                   },
                 ],
               }}
-              labels="months"
+              label="months"
             />
-          </CCardBody>
-        </CCardBody>
-      </CCard>
-
-      {/* <WidgetsBrand withCharts /> */}
-
-      <CRow>
-        <CCol xs>
-          <CCard className="mb-4">
-            <CCardHeader>Traffic {' & '} Sales</CCardHeader>
-            <CCardBody>
-              <CRow>
-                <CCol xs={12} md={6} xl={6}>
-                  <CRow>
-                    <CCol sm={6}>
-                      <div className="border-start border-start-4 border-start-info py-1 px-3">
-                        <div className="text-medium-emphasis small">New Clients</div>
-                        <div className="fs-5 fw-semibold">9,123</div>
-                      </div>
-                    </CCol>
-                    <CCol sm={6}>
-                      <div className="border-start border-start-4 border-start-danger py-1 px-3 mb-3">
-                        <div className="text-medium-emphasis small">Recurring Clients</div>
-                        <div className="fs-5 fw-semibold">22,643</div>
-                      </div>
-                    </CCol>
-                  </CRow>
-
-                  <hr className="mt-0" />
-                  {progressGroupExample1.map((item, index) => (
-                    <div className="progress-group mb-4" key={index}>
-                      <div className="progress-group-prepend">
-                        <span className="text-medium-emphasis small">{item.title}</span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="info" value={item.value1} />
-                        <CProgress thin color="danger" value={item.value2} />
-                      </div>
-                    </div>
-                  ))}
-                </CCol>
-
-                <CCol xs={12} md={6} xl={6}>
-                  <CRow>
-                    <CCol sm={6}>
-                      <div className="border-start border-start-4 border-start-warning py-1 px-3 mb-3">
-                        <div className="text-medium-emphasis small">Pageviews</div>
-                        <div className="fs-5 fw-semibold">78,623</div>
-                      </div>
-                    </CCol>
-                    <CCol sm={6}>
-                      <div className="border-start border-start-4 border-start-success py-1 px-3 mb-3">
-                        <div className="text-medium-emphasis small">Organic</div>
-                        <div className="fs-5 fw-semibold">49,123</div>
-                      </div>
-                    </CCol>
-                  </CRow>
-
-                  <hr className="mt-0" />
-
-                  {progressGroupExample2.map((item, index) => (
-                    <div className="progress-group mb-4" key={index}>
-                      <div className="progress-group-header">
-                        <CIcon className="me-2" icon={item.icon} size="lg" />
-                        <span>{item.title}</span>
-                        <span className="ms-auto fw-semibold">{item.value}%</span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="warning" value={item.value} />
-                      </div>
-                    </div>
-                  ))}
-
-                  <div className="mb-5"></div>
-
-                  {progressGroupExample3.map((item, index) => (
-                    <div className="progress-group" key={index}>
-                      <div className="progress-group-header">
-                        <CIcon className="me-2" icon={item.icon} size="lg" />
-                        <span>{item.title}</span>
-                        <span className="ms-auto fw-semibold">
-                          {item.value}{' '}
-                          <span className="text-medium-emphasis small">({item.percent}%)</span>
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="success" value={item.percent} />
-                      </div>
-                    </div>
-                  ))}
-                </CCol>
-              </CRow>
-
-              <br />
-
-              <CTable align="middle" className="mb-0 border" hover responsive>
-                <CTableHead color="light">
-                  <CTableRow>
-                    <CTableHeaderCell className="text-center">
-                      <CIcon icon={cilPeople} />
-                    </CTableHeaderCell>
-                    <CTableHeaderCell>User</CTableHeaderCell>
-                    <CTableHeaderCell className="text-center">Country</CTableHeaderCell>
-                    <CTableHeaderCell>Usage</CTableHeaderCell>
-                    <CTableHeaderCell className="text-center">Payment Method</CTableHeaderCell>
-                    <CTableHeaderCell>Activity</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {tableExample.map((item, index) => (
-                    <CTableRow v-for="item in tableItems" key={index}>
-                      <CTableDataCell className="text-center">
-                        <CAvatar size="md" src={item.avatar.src} status={item.avatar.status} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div>{item.user.name}</div>
-                        <div className="small text-medium-emphasis">
-                          <span>{item.user.new ? 'New' : 'Recurring'}</span> | Registered:{' '}
-                          {item.user.registered}
-                        </div>
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CIcon size="xl" icon={item.country.flag} title={item.country.name} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="clearfix">
-                          <div className="float-start">
-                            <strong>{item.usage.value}%</strong>
-                          </div>
-                          <div className="float-end">
-                            <small className="text-medium-emphasis">{item.usage.period}</small>
-                          </div>
-                        </div>
-                        <CProgress thin color={item.usage.color} value={item.usage.value} />
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CIcon size="xl" icon={item.payment.icon} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="small text-medium-emphasis">Last login</div>
-                        <strong>{item.activity}</strong>
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
-    </>
+          </>
+        ))}
+    </div>
   )
 }
 
+function ProductDashboardLine(props) {
+  // eslint-disable-next-line react/prop-types
+  const id = props.selectKey
+  return (
+    <div>
+      {dataexample
+        .filter((numberID) => numberID.id == id)
+        .map((items) => (
+          <>
+            <CChart
+              type="line"
+              data={{
+                labels: ['Angry', 'Disgust', 'Happy', 'Neutral', 'Surprise'],
+                datasets: [
+                  {
+                    label: items.name,
+                    backgroundColor: 'rgba(220, 220, 220, 0.2)',
+                    borderColor: 'rgba(220, 220, 220, 1)',
+                    pointBackgroundColor: 'rgba(220, 220, 220, 1)',
+                    pointBorderColor: '#fff',
+                    data: [
+                      items.angry,
+                      items.disgust,
+                      items.happy,
+                      items.neutral,
+                      items.surprise,
+                      80,
+                    ],
+                  },
+                  {
+                    label: 'Product',
+                    backgroundColor: 'rgba(151, 187, 205, 0.2)',
+                    borderColor: 'rgba(151, 187, 205, 1)',
+                    pointBackgroundColor: 'rgba(151, 187, 205, 1)',
+                    pointBorderColor: '#fff',
+                    data: [10, 20, 30, 10, 50, 80],
+                  },
+                ],
+              }}
+            />
+          </>
+        ))}
+    </div>
+  )
+}
+
+function ProductDashboardDoughnut(props) {
+  // eslint-disable-next-line react/prop-types
+  const id = props.selectKey
+  return (
+    <div>
+      {dataexample
+        .filter((numberID) => numberID.id == id)
+        .map((items) => (
+          <>
+            <CChart
+              type="doughnut"
+              data={{
+                labels: ['Angry', 'Disgust', 'Happy', 'Neutral', 'Surprise'],
+                datasets: [
+                  {
+                    backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16', '#336699'],
+                    data: [40, 20, 80, 10, 30],
+                  },
+                ],
+              }}
+            />
+          </>
+        ))}
+    </div>
+  )
+}
+
+function ProductName(props) {
+  // eslint-disable-next-line react/prop-types
+  const id = props.selectKey
+  return (
+    <div>
+      {dataexample
+        .filter((numberID) => numberID.id == id)
+        .map((items) => (
+          <>
+            <CCardHeader className="h4">{items.name}</CCardHeader>
+          </>
+        ))}
+    </div>
+  )
+}
+
+class Dashboard extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      items: [],
+      DataisLoaded: false,
+      isOpen: false,
+      isSelected: true,
+      selectKey: 1,
+    }
+
+    this.hanndleDropdownChange = this.hanndleDropdownChange.bind(this)
+  }
+
+  componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then((res) => {
+        res.json()
+      })
+      .then((json) => {
+        this.setState({
+          items: json,
+          DataisLoaded: true,
+        })
+      })
+  }
+
+  hanndleDropdownChange(e) {
+    this.setState({
+      selectKey: e.target.value,
+    })
+  }
+
+  render() {
+    const { DataisLoaded } = this.state
+    const selectKey = this.state.selectKey
+    const isSelected = this.state.isSelected
+    let content
+    let lineChart
+    let productName
+    if (isSelected) {
+      content = <ProductDashboardBar selectKey={selectKey} />
+      lineChart = <ProductDashboardDoughnut selectKey={selectKey} />
+      productName = <ProductName selectKey={selectKey} />
+    }
+    if (!DataisLoaded)
+      return (
+        <div>
+          <h1>Loading...</h1>
+        </div>
+      )
+    return (
+      <>
+        {/* <div>
+          <h1> Fetch data from an api in react </h1>{' '}
+          {items.map((item) => (
+            <ol key={item.id}>
+              User_Name: {item.username}, Full_Name: {item.name}, User_Email: {item.email},
+            </ol>
+          ))}
+        </div> */}
+        <WidgetsDropdown />
+
+        <CCard className="mb-4">
+          <CCardBody>
+            <CRow>
+              <CCol sm={5}>
+                <h2 id="traffic" className="card-title mb-0">
+                  Overviews
+                </h2>
+                <div className="small text-medium-emphasis">February - March 2022</div>
+              </CCol>
+            </CRow>
+            <CCardBody>
+              <CRow>
+                <CCol xs={12} md={6} xl={6}>
+                  <CTable hover>
+                    <CTableHead>
+                      <CTableRow>
+                        <CTableHeaderCell scope="col">Dataset statistics</CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
+                    <CTableBody>
+                      <CTableRow>
+                        <CTableDataCell colSpan="2">Number of variables</CTableDataCell>
+                        <CTableDataCell>42</CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableDataCell colSpan="2">Number of observations</CTableDataCell>
+                        <CTableDataCell>494021</CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableDataCell colSpan="2">Missing cells</CTableDataCell>
+                        <CTableDataCell>0</CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableDataCell colSpan="2">Missing cells (%)</CTableDataCell>
+                        <CTableDataCell>0.0%</CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableDataCell colSpan="2">Total size in memory</CTableDataCell>
+                        <CTableDataCell>158.3 MB</CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableDataCell colSpan="2">Average record size in memory</CTableDataCell>
+                        <CTableDataCell>336.0 B</CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableDataCell colSpan="2">Numeric</CTableDataCell>
+                        <CTableDataCell>28</CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableDataCell colSpan="2">Categorical</CTableDataCell>
+                        <CTableDataCell>14</CTableDataCell>
+                      </CTableRow>
+                    </CTableBody>
+                  </CTable>
+                </CCol>
+                <CCol xs={12} md={6} xl={6}>
+                  <CRow>
+                    <CTable hover>
+                      <CTableHead>
+                        <CTableRow>
+                          <CTableHeaderCell scope="col">Variable types</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+                      <CTableBody>
+                        <CTableRow>
+                          <CTableDataCell colSpan="2">Numeric</CTableDataCell>
+                          <CTableDataCell>28</CTableDataCell>
+                        </CTableRow>
+                        <CTableRow>
+                          <CTableDataCell colSpan="2">Categorical</CTableDataCell>
+                          <CTableDataCell>14</CTableDataCell>
+                        </CTableRow>
+                      </CTableBody>
+                    </CTable>
+                  </CRow>
+                </CCol>
+              </CRow>
+            </CCardBody>
+          </CCardBody>
+        </CCard>
+
+        <CRow>
+          <CCol xs>
+            <CCard className="mb-4">
+              {productName}
+              <CCardBody>
+                <CRow>
+                  <CCol xs={12} md={6} xl={6}>
+                    <CRow>
+                      {content}
+                      <br />
+                      <hr className="mt-0" />
+                      {lineChart}
+                    </CRow>
+                  </CCol>
+                  <CCol xs={12} md={6} xl={6}>
+                    <CRow>
+                      <CCol sm={6}>
+                        <div className="border-start border-start-4 border-start-success py-1 px-3 mb-3">
+                          <div className="text-medium-emphasis small">Product</div>
+                          <CFormSelect
+                            key={this.state.selectKey}
+                            value={this.state.selectKey}
+                            onChange={this.hanndleDropdownChange}
+                          >
+                            {dataexample.map((items) => (
+                              <option isSelected={isSelected} key={items.id} value={items.id}>
+                                {items.name}
+                              </option>
+                            ))}
+                          </CFormSelect>
+                        </div>
+                      </CCol>
+                      <CCol sm={6}>
+                        <div className="border-start border-start-4 border-start-success py-1 px-3 mb-3">
+                          <div className="text-medium-emphasis small">Survey</div>
+                          <CFormSelect
+                            key={this.state.selectKey}
+                            value={this.state.selectKey}
+                            onChange={this.hanndleDropdownChange}
+                          >
+                            <option isSelected={isSelected} value="Survey 1">
+                              Survey 1
+                            </option>
+                            <option isSelected={isSelected} value="Survey 2">
+                              Survey 2
+                            </option>
+                            <option isSelected={isSelected} value="Survey 3">
+                              Survey 3
+                            </option>
+                          </CFormSelect>
+                        </div>
+                      </CCol>
+                    </CRow>
+                    <hr className="mt-0" />
+                    <CTable hover>
+                      <CTableHead>
+                        <CTableRow>
+                          <CTableHeaderCell scope="col">Variable types</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+                      <CTableBody>
+                        <CTableRow>
+                          <CTableDataCell colSpan="2">Numeric</CTableDataCell>
+                          <CTableDataCell>28</CTableDataCell>
+                        </CTableRow>
+                        <CTableRow>
+                          <CTableDataCell colSpan="2">Categorical</CTableDataCell>
+                          <CTableDataCell>14</CTableDataCell>
+                        </CTableRow>
+                      </CTableBody>
+                    </CTable>
+                    {progressGroupExample2.map((item, index) => (
+                      <div className="progress-group mb-4" key={index}>
+                        <div className="progress-group-header">
+                          <span>{item.title}</span>
+                          <span className="ms-auto fw-semibold">{item.value}%</span>
+                        </div>
+                        <div className="progress-group-bars">
+                          <CProgress thin color="warning" value={item.value} />
+                        </div>
+                      </div>
+                    ))}
+
+                    <div className="mb-5"></div>
+
+                    {progressGroupExample3.map((item, index) => (
+                      <div className="progress-group" key={index}>
+                        <div className="progress-group-header">
+                          <span>{item.title}</span>
+                          <span className="ms-auto fw-semibold">
+                            {item.value}{' '}
+                            <span className="text-medium-emphasis small">({item.percent}%)</span>
+                          </span>
+                        </div>
+                        <div className="progress-group-bars">
+                          <CProgress thin color="success" value={item.percent} />
+                        </div>
+                      </div>
+                    ))}
+                  </CCol>
+                </CRow>
+                <br />
+              </CCardBody>
+            </CCard>
+          </CCol>
+        </CRow>
+      </>
+    )
+  }
+}
 export default Dashboard
