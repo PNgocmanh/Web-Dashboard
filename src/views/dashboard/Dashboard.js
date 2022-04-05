@@ -1,5 +1,4 @@
 import React, { Component, lazy } from 'react'
-import { useState } from 'react'
 
 import {
   CCard,
@@ -18,9 +17,9 @@ import {
 } from '@coreui/react'
 import { CChartBar, CChart } from '@coreui/react-chartjs'
 
-import { Bar } from 'react-chartjs-2'
 import { render } from 'react-dom'
 import { number } from 'prop-types'
+import axios from 'axios'
 
 const WidgetsDropdown = lazy(() => import('../widgets/WidgetsDropdown.js'))
 
@@ -28,18 +27,6 @@ const dataexample = [
   { id: 1, name: 'Product 1', angry: 40, disgust: 20, happy: 12, neutral: 39, surprise: 10 },
   { id: 2, name: 'Product 2', angry: 10, disgust: 10, happy: 40, neutral: 20, surprise: 30 },
   { id: 3, name: 'Product 3', angry: 5, disgust: 0, happy: 50, neutral: 10, surprise: 30 },
-]
-
-const progressGroupExample2 = [
-  { title: 'Male', value: 53 },
-  { title: 'Female', value: 43 },
-]
-
-const progressGroupExample3 = [
-  { title: 'Organic Search', percent: 56, value: '191,235' },
-  { title: 'Facebook', percent: 15, value: '51,223' },
-  { title: 'Twitter', percent: 11, value: '37,564' },
-  { title: 'LinkedIn', percent: 8, value: '27,319' },
 ]
 
 function ProductDashboardBar(props) {
@@ -77,95 +64,6 @@ function ProductDashboardBar(props) {
   )
 }
 
-function ProductDashboardLine(props) {
-  // eslint-disable-next-line react/prop-types
-  const id = props.selectKey
-  return (
-    <div>
-      {dataexample
-        .filter((numberID) => numberID.id == id)
-        .map((items) => (
-          <>
-            <CChart
-              type="line"
-              data={{
-                labels: ['Angry', 'Disgust', 'Happy', 'Neutral', 'Surprise'],
-                datasets: [
-                  {
-                    label: items.name,
-                    backgroundColor: 'rgba(220, 220, 220, 0.2)',
-                    borderColor: 'rgba(220, 220, 220, 1)',
-                    pointBackgroundColor: 'rgba(220, 220, 220, 1)',
-                    pointBorderColor: '#fff',
-                    data: [
-                      items.angry,
-                      items.disgust,
-                      items.happy,
-                      items.neutral,
-                      items.surprise,
-                      80,
-                    ],
-                  },
-                  {
-                    label: 'Product',
-                    backgroundColor: 'rgba(151, 187, 205, 0.2)',
-                    borderColor: 'rgba(151, 187, 205, 1)',
-                    pointBackgroundColor: 'rgba(151, 187, 205, 1)',
-                    pointBorderColor: '#fff',
-                    data: [10, 20, 30, 10, 50, 80],
-                  },
-                ],
-              }}
-            />
-          </>
-        ))}
-    </div>
-  )
-}
-
-function ProductDashboardDoughnut(props) {
-  // eslint-disable-next-line react/prop-types
-  const id = props.selectKey
-  return (
-    <div>
-      {dataexample
-        .filter((numberID) => numberID.id == id)
-        .map((items) => (
-          <>
-            <CChart
-              type="doughnut"
-              data={{
-                labels: ['Angry', 'Disgust', 'Happy', 'Neutral', 'Surprise'],
-                datasets: [
-                  {
-                    backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16', '#336699'],
-                    data: [40, 20, 80, 10, 30],
-                  },
-                ],
-              }}
-            />
-          </>
-        ))}
-    </div>
-  )
-}
-
-function ProductName(props) {
-  // eslint-disable-next-line react/prop-types
-  const id = props.selectKey
-  return (
-    <div>
-      {dataexample
-        .filter((numberID) => numberID.id == id)
-        .map((items) => (
-          <>
-            <CCardHeader className="h4">{items.name}</CCardHeader>
-          </>
-        ))}
-    </div>
-  )
-}
-
 class Dashboard extends Component {
   constructor(props) {
     super(props)
@@ -175,19 +73,43 @@ class Dashboard extends Component {
       isOpen: false,
       isSelected: true,
       selectKey: 1,
+      ProductData: [],
+      SurveyData: [],
     }
 
     this.hanndleDropdownChange = this.hanndleDropdownChange.bind(this)
+    this.getAngry = this.getAngry.bind(this)
+    this.getDisgust = this.getDisgust.bind(this)
+    this.getNeutral = this.getNeutral.bind(this)
+    this.getSurprise = this.getSurprise.bind(this)
+    this.getSum = this.getSum.bind(this)
   }
 
   componentDidMount() {
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then((res) => {
-        res.json()
-      })
+    fetch('https://ai-emotion-detection-server.herokuapp.com/api/v1/edata')
+      .then((res) => res.json())
       .then((json) => {
         this.setState({
           items: json,
+          DataisLoaded: true,
+        })
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    fetch('https://ai-emotion-detection-server.herokuapp.com/api/v1/product')
+      .then((res) => res.json())
+      .then((json) => {
+        this.setState({
+          ProductData: json,
+          DataisLoaded: true,
+        })
+      })
+    fetch('https://ai-emotion-detection-server.herokuapp.com/api/v1/survey')
+      .then((res) => res.json())
+      .then((json) => {
+        this.setState({
+          SurveyData: json,
           DataisLoaded: true,
         })
       })
@@ -199,17 +121,79 @@ class Dashboard extends Component {
     })
   }
 
+  getSum(dataList) {
+    let sum = 0
+    for (let index = 0; index < dataList.length; index++) {
+      const element = dataList[index]
+      if (this.state.selectKey == element.product_id)
+        sum =
+          sum + element.neutral + element.angry + element.happy + element.surprise + element.disgust
+    }
+    return sum
+  }
+
+  getAngry(dataList) {
+    let sum = 0
+    for (let index = 0; index < dataList.length; index++) {
+      const element = dataList[index]
+      if (this.state.selectKey == element.product_id) sum = sum + element.angry
+    }
+    return sum
+  }
+
+  getDisgust(dataList) {
+    let sum = 0
+    for (let index = 0; index < dataList.length; index++) {
+      const element = dataList[index]
+      if (this.state.selectKey == element.product_id) sum = sum + element.disgust
+    }
+    return sum
+  }
+
+  getHappy(dataList) {
+    let sum = 0
+    for (let index = 0; index < dataList.length; index++) {
+      const element = dataList[index]
+      if (this.state.selectKey == element.product_id) sum = sum + element.happy
+    }
+    return sum
+  }
+
+  getNeutral(dataList) {
+    let sum = 0
+    for (let index = 0; index < dataList.length; index++) {
+      const element = dataList[index]
+      if (this.state.selectKey == element.product_id) sum = sum + element.neutral
+    }
+    return sum
+  }
+
+  getSurprise(dataList) {
+    let sum = 0
+    for (let index = 0; index < dataList.length; index++) {
+      const element = dataList[index]
+      if (this.state.selectKey == element.product_id) sum = sum + element.surprise
+    }
+    return sum
+  }
+
   render() {
-    const { DataisLoaded } = this.state
+    const { DataisLoaded, items, ProductData, SurveyData } = this.state
     const selectKey = this.state.selectKey
     const isSelected = this.state.isSelected
+    console.log(selectKey)
     let content
-    let lineChart
-    let productName
+    let sum = this.getSum(items)
+    console.log(sum)
+    let angry = this.getAngry(items)
+    let disgust = this.getDisgust(items)
+    //let happy = this.getHappy(items)
+    let happy = this.getHappy(items)
+    console.log(happy)
+    let neutral = this.getNeutral(items)
+    let surprise = this.getSurprise(items)
     if (isSelected) {
       content = <ProductDashboardBar selectKey={selectKey} />
-      lineChart = <ProductDashboardDoughnut selectKey={selectKey} />
-      productName = <ProductName selectKey={selectKey} />
     }
     if (!DataisLoaded)
       return (
@@ -219,14 +203,6 @@ class Dashboard extends Component {
       )
     return (
       <>
-        {/* <div>
-          <h1> Fetch data from an api in react </h1>{' '}
-          {items.map((item) => (
-            <ol key={item.id}>
-              User_Name: {item.username}, Full_Name: {item.name}, User_Email: {item.email},
-            </ol>
-          ))}
-        </div> */}
         <WidgetsDropdown />
 
         <CCard className="mb-4">
@@ -313,15 +289,57 @@ class Dashboard extends Component {
         <CRow>
           <CCol xs>
             <CCard className="mb-4">
-              {productName}
+              {ProductData.filter((numberID) => numberID.id == this.state.selectKey).map(
+                (items) => (
+                  <>
+                    <CCardHeader className="h4">{items.pname}</CCardHeader>
+                  </>
+                ),
+              )}
               <CCardBody>
                 <CRow>
                   <CCol xs={12} md={6} xl={6}>
                     <CRow>
-                      {content}
+                      <CChartBar
+                        data={{
+                          labels: ['Angry', 'Disgust', 'Happy', 'Neutral', 'Surprise'],
+                          datasets: [
+                            {
+                              label: 'Collection',
+                              backgroundColor: '#f87979',
+                              data: [angry, disgust, happy, neutral, surprise, sum],
+                            },
+                          ],
+                        }}
+                        label="months"
+                      />
                       <br />
                       <hr className="mt-0" />
-                      {lineChart}
+                      <CChart
+                        type="doughnut"
+                        data={{
+                          labels: ['Angry', 'Disgust', 'Happy', 'Neutral', 'Surprise'],
+                          datasets: [
+                            {
+                              label: '%',
+                              backgroundColor: [
+                                '#41B883',
+                                '#E46651',
+                                '#00D8FF',
+                                '#DD1B16',
+                                '#336699',
+                              ],
+                              data: [
+                                (angry / sum) * 100,
+                                (disgust / sum) * 100,
+                                (happy / sum) * 100,
+                                (neutral / sum) * 100,
+                                (surprise / sum) * 100,
+                              ],
+                            },
+                          ],
+                        }}
+                      />
                     </CRow>
                   </CCol>
                   <CCol xs={12} md={6} xl={6}>
@@ -334,9 +352,9 @@ class Dashboard extends Component {
                             value={this.state.selectKey}
                             onChange={this.hanndleDropdownChange}
                           >
-                            {dataexample.map((items) => (
+                            {ProductData.map((items) => (
                               <option isSelected={isSelected} key={items.id} value={items.id}>
-                                {items.name}
+                                {items.pname}
                               </option>
                             ))}
                           </CFormSelect>
@@ -345,20 +363,14 @@ class Dashboard extends Component {
                       <CCol sm={6}>
                         <div className="border-start border-start-4 border-start-success py-1 px-3 mb-3">
                           <div className="text-medium-emphasis small">Survey</div>
-                          <CFormSelect
-                            key={this.state.selectKey}
-                            value={this.state.selectKey}
-                            onChange={this.hanndleDropdownChange}
-                          >
-                            <option isSelected={isSelected} value="Survey 1">
-                              Survey 1
-                            </option>
-                            <option isSelected={isSelected} value="Survey 2">
-                              Survey 2
-                            </option>
-                            <option isSelected={isSelected} value="Survey 3">
-                              Survey 3
-                            </option>
+                          <CFormSelect>
+                            {SurveyData.filter(
+                              (numberID) => numberID.id == this.state.selectKey,
+                            ).map((items) => (
+                              <option isSelected={isSelected} key={items.id} value={items.id}>
+                                {items.survey_time}
+                              </option>
+                            ))}
                           </CFormSelect>
                         </div>
                       </CCol>
@@ -367,13 +379,29 @@ class Dashboard extends Component {
                     <CTable hover>
                       <CTableHead>
                         <CTableRow>
-                          <CTableHeaderCell scope="col">Variable types</CTableHeaderCell>
+                          <CTableHeaderCell scope="col">Details of Survey</CTableHeaderCell>
                         </CTableRow>
                       </CTableHead>
                       <CTableBody>
                         <CTableRow>
-                          <CTableDataCell colSpan="2">Numeric</CTableDataCell>
-                          <CTableDataCell>28</CTableDataCell>
+                          <CTableDataCell colSpan="2">Distinct</CTableDataCell>
+                          <CTableDataCell>2495</CTableDataCell>
+                        </CTableRow>
+                        <CTableRow>
+                          <CTableDataCell colSpan="2">Distinct (%)</CTableDataCell>
+                          <CTableDataCell>0.5%</CTableDataCell>
+                        </CTableRow>
+                        <CTableRow>
+                          <CTableDataCell colSpan="2">Missing</CTableDataCell>
+                          <CTableDataCell>0</CTableDataCell>
+                        </CTableRow>
+                        <CTableRow>
+                          <CTableDataCell colSpan="2">Missing (%)</CTableDataCell>
+                          <CTableDataCell>0.0%</CTableDataCell>
+                        </CTableRow>
+                        <CTableRow>
+                          <CTableDataCell colSpan="2">Memory size</CTableDataCell>
+                          <CTableDataCell>30 MB</CTableDataCell>
                         </CTableRow>
                         <CTableRow>
                           <CTableDataCell colSpan="2">Categorical</CTableDataCell>
@@ -381,34 +409,79 @@ class Dashboard extends Component {
                         </CTableRow>
                       </CTableBody>
                     </CTable>
-                    {progressGroupExample2.map((item, index) => (
-                      <div className="progress-group mb-4" key={index}>
-                        <div className="progress-group-header">
-                          <span>{item.title}</span>
-                          <span className="ms-auto fw-semibold">{item.value}%</span>
-                        </div>
-                        <div className="progress-group-bars">
-                          <CProgress thin color="warning" value={item.value} />
-                        </div>
-                      </div>
-                    ))}
 
                     <div className="mb-5"></div>
 
-                    {progressGroupExample3.map((item, index) => (
-                      <div className="progress-group" key={index}>
-                        <div className="progress-group-header">
-                          <span>{item.title}</span>
-                          <span className="ms-auto fw-semibold">
-                            {item.value}{' '}
-                            <span className="text-medium-emphasis small">({item.percent}%)</span>
+                    <div className="progress-group">
+                      <div className="progress-group-header">
+                        <span>Angry</span>
+                        <span className="ms-auto fw-semibold">
+                          {angry}{' '}
+                          <span className="text-medium-emphasis small">
+                            ({(angry / sum) * 100}%)
                           </span>
-                        </div>
-                        <div className="progress-group-bars">
-                          <CProgress thin color="success" value={item.percent} />
-                        </div>
+                        </span>
                       </div>
-                    ))}
+                      <div className="progress-group-bars">
+                        <CProgress thin color="success" value={(angry / sum) * 100} />
+                      </div>
+                    </div>
+                    <div className="progress-group">
+                      <div className="progress-group-header">
+                        <span>Disgust</span>
+                        <span className="ms-auto fw-semibold">
+                          {disgust}{' '}
+                          <span className="text-medium-emphasis small">
+                            ({(disgust / sum) * 100}%)
+                          </span>
+                        </span>
+                      </div>
+                      <div className="progress-group-bars">
+                        <CProgress thin color="success" value={(disgust / sum) * 100} />
+                      </div>
+                    </div>
+                    <div className="progress-group">
+                      <div className="progress-group-header">
+                        <span>Happy</span>
+                        <span className="ms-auto fw-semibold">
+                          {happy}{' '}
+                          <span className="text-medium-emphasis small">
+                            ({(happy / sum) * 100}%)
+                          </span>
+                        </span>
+                      </div>
+                      <div className="progress-group-bars">
+                        <CProgress thin color="success" value={(happy / sum) * 100} />
+                      </div>
+                    </div>
+                    <div className="progress-group">
+                      <div className="progress-group-header">
+                        <span>Neutral</span>
+                        <span className="ms-auto fw-semibold">
+                          {neutral}{' '}
+                          <span className="text-medium-emphasis small">
+                            ({(neutral / sum) * 100}%)
+                          </span>
+                        </span>
+                      </div>
+                      <div className="progress-group-bars">
+                        <CProgress thin color="success" value={(neutral / sum) * 100} />
+                      </div>
+                    </div>
+                    <div className="progress-group">
+                      <div className="progress-group-header">
+                        <span>Surprise</span>
+                        <span className="ms-auto fw-semibold">
+                          {surprise}{' '}
+                          <span className="text-medium-emphasis small">
+                            ({(surprise / sum) * 100}%)
+                          </span>
+                        </span>
+                      </div>
+                      <div className="progress-group-bars">
+                        <CProgress thin color="success" value={(surprise / sum) * 100} />
+                      </div>
+                    </div>
                   </CCol>
                 </CRow>
                 <br />

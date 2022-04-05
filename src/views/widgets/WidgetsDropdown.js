@@ -95,7 +95,7 @@ const WidgetsDropdown = () => {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                 datasets: [
                   {
-                    label: 'Activity day',
+                    label: 'Activity log',
                     backgroundColor: 'transparent',
                     borderColor: 'rgba(255,255,255,.55)',
                     pointBackgroundColor: getStyle('--cui-info'),
@@ -160,7 +160,7 @@ const WidgetsDropdown = () => {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                 datasets: [
                   {
-                    label: 'Number of customers',
+                    label: 'Surveys',
                     backgroundColor: 'rgba(255,255,255,.2)',
                     borderColor: 'rgba(255,255,255,.55)',
                     data: [78, 81, 80, 45, 34, 12, 40],
@@ -222,17 +222,13 @@ const WidgetsDropdown = () => {
                   'October',
                   'November',
                   'December',
-                  'January',
-                  'February',
-                  'March',
-                  'April',
                 ],
                 datasets: [
                   {
                     label: 'Numbers of Products',
                     backgroundColor: 'rgba(255,255,255,.2)',
                     borderColor: 'rgba(255,255,255,.55)',
-                    data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
+                    data: [0, 2, 1, 3, 2, 3, 4, 1, 0, 2, 3, 5],
                     barPercentage: 0.6,
                   },
                 ],
