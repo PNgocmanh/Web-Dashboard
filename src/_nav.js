@@ -30,12 +30,6 @@ const _nav = [
       },
     ],
   },
-  {
-    component: CNavItem,
-    name: 'Widgets',
-    to: '/widgets',
-    icon: <CIcon icon={cilCalculator} customClassName="nav-icon" />,
-  },
 ]
 
 export default _nav
