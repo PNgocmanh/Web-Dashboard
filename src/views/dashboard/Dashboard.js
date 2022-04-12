@@ -17,52 +17,7 @@ import {
 } from '@coreui/react'
 import { CChartBar, CChart } from '@coreui/react-chartjs'
 
-import { render } from 'react-dom'
-import { number } from 'prop-types'
-import axios from 'axios'
-
 const WidgetsDropdown = lazy(() => import('../widgets/WidgetsDropdown.js'))
-
-const dataexample = [
-  { id: 1, name: 'Product 1', angry: 40, disgust: 20, happy: 12, neutral: 39, surprise: 10 },
-  { id: 2, name: 'Product 2', angry: 10, disgust: 10, happy: 40, neutral: 20, surprise: 30 },
-  { id: 3, name: 'Product 3', angry: 5, disgust: 0, happy: 50, neutral: 10, surprise: 30 },
-]
-
-function ProductDashboardBar(props) {
-  // eslint-disable-next-line react/prop-types
-  const id = props.selectKey
-  return (
-    <div>
-      {dataexample
-        .filter((numberID) => numberID.id == id)
-        .map((items) => (
-          <>
-            <CChartBar
-              data={{
-                labels: ['Angry', 'Disgust', 'Happy', 'Neutral', 'Surprise'],
-                datasets: [
-                  {
-                    label: 'Emotion',
-                    backgroundColor: '#f87979',
-                    data: [
-                      items.angry,
-                      items.disgust,
-                      items.happy,
-                      items.neutral,
-                      items.surprise,
-                      100,
-                    ],
-                  },
-                ],
-              }}
-              label="months"
-            />
-          </>
-        ))}
-    </div>
-  )
-}
 
 class Dashboard extends Component {
   constructor(props) {
@@ -70,19 +25,13 @@ class Dashboard extends Component {
     this.state = {
       items: [],
       DataisLoaded: false,
-      isOpen: false,
-      isSelected: true,
       selectKey: 1,
       ProductData: [],
       SurveyData: [],
+      surveyID: 1,
     }
 
     this.hanndleDropdownChange = this.hanndleDropdownChange.bind(this)
-    this.getAngry = this.getAngry.bind(this)
-    this.getDisgust = this.getDisgust.bind(this)
-    this.getNeutral = this.getNeutral.bind(this)
-    this.getSurprise = this.getSurprise.bind(this)
-    this.getSum = this.getSum.bind(this)
   }
 
   componentDidMount() {
@@ -125,7 +74,7 @@ class Dashboard extends Component {
     let sum = 0
     for (let index = 0; index < dataList.length; index++) {
       const element = dataList[index]
-      if (this.state.selectKey == element.product_id)
+      if (this.state.selectKey == element.productID)
         sum =
           sum + element.neutral + element.angry + element.happy + element.surprise + element.disgust
     }
@@ -136,7 +85,7 @@ class Dashboard extends Component {
     let sum = 0
     for (let index = 0; index < dataList.length; index++) {
       const element = dataList[index]
-      if (this.state.selectKey == element.product_id) sum = sum + element.angry
+      if (this.state.selectKey == element.productID) sum = sum + element.angry
     }
     return sum
   }
@@ -145,7 +94,7 @@ class Dashboard extends Component {
     let sum = 0
     for (let index = 0; index < dataList.length; index++) {
       const element = dataList[index]
-      if (this.state.selectKey == element.product_id) sum = sum + element.disgust
+      if (this.state.selectKey == element.productID) sum = sum + element.disgust
     }
     return sum
   }
@@ -154,7 +103,7 @@ class Dashboard extends Component {
     let sum = 0
     for (let index = 0; index < dataList.length; index++) {
       const element = dataList[index]
-      if (this.state.selectKey == element.product_id) sum = sum + element.happy
+      if (this.state.selectKey == element.productID) sum = sum + element.happy
     }
     return sum
   }
@@ -163,7 +112,7 @@ class Dashboard extends Component {
     let sum = 0
     for (let index = 0; index < dataList.length; index++) {
       const element = dataList[index]
-      if (this.state.selectKey == element.product_id) sum = sum + element.neutral
+      if (this.state.selectKey == element.productID) sum = sum + element.neutral
     }
     return sum
   }
@@ -172,7 +121,7 @@ class Dashboard extends Component {
     let sum = 0
     for (let index = 0; index < dataList.length; index++) {
       const element = dataList[index]
-      if (this.state.selectKey == element.product_id) sum = sum + element.surprise
+      if (this.state.selectKey == element.productID) sum = sum + element.surprise
     }
     return sum
   }
@@ -180,21 +129,12 @@ class Dashboard extends Component {
   render() {
     const { DataisLoaded, items, ProductData, SurveyData } = this.state
     const selectKey = this.state.selectKey
-    const isSelected = this.state.isSelected
-    console.log(selectKey)
-    let content
     let sum = this.getSum(items)
-    console.log(sum)
     let angry = this.getAngry(items)
     let disgust = this.getDisgust(items)
-    //let happy = this.getHappy(items)
     let happy = this.getHappy(items)
-    console.log(happy)
     let neutral = this.getNeutral(items)
     let surprise = this.getSurprise(items)
-    if (isSelected) {
-      content = <ProductDashboardBar selectKey={selectKey} />
-    }
     if (!DataisLoaded)
       return (
         <div>
@@ -353,7 +293,7 @@ class Dashboard extends Component {
                             onChange={this.hanndleDropdownChange}
                           >
                             {ProductData.map((items) => (
-                              <option isSelected={isSelected} key={items.id} value={items.id}>
+                              <option key={items.id} value={items.id}>
                                 {items.pname}
                               </option>
                             ))}
@@ -367,7 +307,7 @@ class Dashboard extends Component {
                             {SurveyData.filter(
                               (numberID) => numberID.id == this.state.selectKey,
                             ).map((items) => (
-                              <option isSelected={isSelected} key={items.id} value={items.id}>
+                              <option key={items.id} value={items.id}>
                                 {items.survey_time}
                               </option>
                             ))}
@@ -418,7 +358,7 @@ class Dashboard extends Component {
                         <span className="ms-auto fw-semibold">
                           {angry}{' '}
                           <span className="text-medium-emphasis small">
-                            ({(angry / sum) * 100}%)
+                            ({((angry / sum) * 100).toFixed(2)}%)
                           </span>
                         </span>
                       </div>
@@ -432,7 +372,7 @@ class Dashboard extends Component {
                         <span className="ms-auto fw-semibold">
                           {disgust}{' '}
                           <span className="text-medium-emphasis small">
-                            ({(disgust / sum) * 100}%)
+                            ({((disgust / sum) * 100).toFixed(2)}%)
                           </span>
                         </span>
                       </div>
@@ -446,7 +386,7 @@ class Dashboard extends Component {
                         <span className="ms-auto fw-semibold">
                           {happy}{' '}
                           <span className="text-medium-emphasis small">
-                            ({(happy / sum) * 100}%)
+                            ({((happy / sum) * 100).toFixed(2)}%)
                           </span>
                         </span>
                       </div>
@@ -460,7 +400,7 @@ class Dashboard extends Component {
                         <span className="ms-auto fw-semibold">
                           {neutral}{' '}
                           <span className="text-medium-emphasis small">
-                            ({(neutral / sum) * 100}%)
+                            ({((neutral / sum) * 100).toFixed(2)}%)
                           </span>
                         </span>
                       </div>
@@ -474,7 +414,7 @@ class Dashboard extends Component {
                         <span className="ms-auto fw-semibold">
                           {surprise}{' '}
                           <span className="text-medium-emphasis small">
-                            ({(surprise / sum) * 100}%)
+                            ({((surprise / sum) * 100).toFixed(2)}%)
                           </span>
                         </span>
                       </div>
