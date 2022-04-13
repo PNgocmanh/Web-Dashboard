@@ -1,5 +1,5 @@
 import React from 'react'
-import { CCard, CCardHeader, CCardBody, CCardFooter } from '@coreui/react'
+import { CCard, CCardHeader, CCardBody, CCardFooter, CButton } from '@coreui/react'
 import axios from 'axios'
 class EmotionData extends React.Component {
   constructor(props) {
@@ -34,8 +34,10 @@ class EmotionData extends React.Component {
       <>
         <CCard className="mb-4">
           <CCardHeader>
-            <button>Add Filter </button>
-            <button className="float-end">Add Filter </button>
+            <CButton color="success">Add Filter </CButton>
+            <CButton className="float-end" color="success">
+              Add Filter{' '}
+            </CButton>
           </CCardHeader>
           <CCardBody>
             <h3 className="text-center">Emotion Table</h3>
@@ -65,7 +67,9 @@ class EmotionData extends React.Component {
             </table>
           </CCardBody>
           <CCardFooter>
-            <button onClick={() => this.download()}>Download data </button>
+            <CButton color="primary" onClick={() => this.download()}>
+              Download data{' '}
+            </CButton>
           </CCardFooter>
         </CCard>
       </>

@@ -377,7 +377,7 @@ class Dashboard extends Component {
                         </span>
                       </div>
                       <div className="progress-group-bars">
-                        <CProgress thin color="success" value={(disgust / sum) * 100} />
+                        <CProgress thin color="warning" value={(disgust / sum) * 100} />
                       </div>
                     </div>
                     <div className="progress-group">
@@ -391,7 +391,7 @@ class Dashboard extends Component {
                         </span>
                       </div>
                       <div className="progress-group-bars">
-                        <CProgress thin color="success" value={(happy / sum) * 100} />
+                        <CProgress thin color="info" value={(happy / sum) * 100} />
                       </div>
                     </div>
                     <div className="progress-group">
@@ -405,7 +405,7 @@ class Dashboard extends Component {
                         </span>
                       </div>
                       <div className="progress-group-bars">
-                        <CProgress thin color="success" value={(neutral / sum) * 100} />
+                        <CProgress thin color="danger" value={(neutral / sum) * 100} />
                       </div>
                     </div>
                     <div className="progress-group">
@@ -419,7 +419,7 @@ class Dashboard extends Component {
                         </span>
                       </div>
                       <div className="progress-group-bars">
-                        <CProgress thin color="success" value={(surprise / sum) * 100} />
+                        <CProgress thin value={(surprise / sum) * 100} />
                       </div>
                     </div>
                   </CCol>
