@@ -41,7 +41,7 @@ const AppHeader = () => {
             </CNavLink>
           </CNavItem>
           <CNavItem>
-            <CNavLink to="/theme/typography" component={NavLink} activeClassName="active">
+            <CNavLink to="/theme/emotion" component={NavLink} activeClassName="active">
               Emotion data
             </CNavLink>
           </CNavItem>

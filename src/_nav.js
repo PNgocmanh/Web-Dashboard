@@ -20,15 +20,27 @@ const _nav = [
   },
   {
     component: CNavGroup,
-    name: 'Product 1',
+    name: 'Products',
     icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'Data emotion',
-        to: '/theme/typography',
+        name: 'Emotions',
+        to: '/theme/emotion',
+      },
+      {
+        component: CNavItem,
+        name: 'Information',
+        to: '/theme/product',
       },
     ],
+  },
+
+  {
+    component: CNavItem,
+    name: 'Survey',
+    to: '/theme/survey',
+    icon: <CIcon icon={cilCalculator} customClassName="nav-icon" />,
   },
 ]
 
