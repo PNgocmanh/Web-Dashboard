@@ -40,6 +40,7 @@
     "chart.js": "^3.7.1",
     "classnames": "^2.3.1",
     "core-js": "^3.19.1",
+    "debug": "^4.3.4",
     "enzyme": "^3.11.0",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
